@@ -3,10 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:IntervalTimer"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
 
+    <Window.Resources>
+        <System:Double x:Key="SettingsPadding"></System:Double>
+    </Window.Resources>
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" Margin="0,119,0,0" Orientation="Vertical" VerticalAlignment="Top" Width="610">
+            <Label x:Name="CountdownDisplay" Content="DISPLAY TEXT" Background="Transparent" HorizontalAlignment="Center" />
+            <ProgressBar x:Name="CountdownBar" Height="10" Background="#FFCACACA" />
+        </StackPanel>
+        <StackPanel RenderTransformOrigin="0.497,0.504" Width="600" Height="187" VerticalAlignment="Top" Margin="100,194,100,0">
+            <Button x:Name="StartButton" Content="Pause" />
+            <StackPanel Height="20" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBox x:Name="StartHour" TextWrapping="Wrap" Text="9" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <Label Content=" : " FontSize="10" />
+                <TextBox x:Name="StartMinute" TextWrapping="Wrap" Text="9" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>
