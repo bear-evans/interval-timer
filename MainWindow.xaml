@@ -19,10 +19,21 @@
         </StackPanel>
         <StackPanel RenderTransformOrigin="0.497,0.504" Width="600" Height="187" VerticalAlignment="Top" Margin="100,194,100,0">
             <Button x:Name="StartButton" Content="Pause" />
+            <Label Content="Settings" Margin="0,20,0,0" Width="600" HorizontalContentAlignment="Center" Foreground="Black" BorderThickness="0,0,0,1" BorderBrush="Black" />
+            <!-- #region Start Time-->
             <StackPanel Height="20" HorizontalAlignment="Center" Orientation="Horizontal">
-                <TextBox x:Name="StartHour" TextWrapping="Wrap" Text="9" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
-                <Label Content=" : " FontSize="10" />
-                <TextBox x:Name="StartMinute" TextWrapping="Wrap" Text="9" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <Label Content="Start Time" FontSize="8" Padding="5,5,5,5" UseLayoutRounding="True" ScrollViewer.CanContentScroll="True" VerticalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" Width="80" />
+                <TextBox x:Name="StartHour" TextWrapping="Wrap" Text="{Binding StartHourInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <Label Content=" : " FontSize="8" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                <TextBox x:Name="StartMinute" TextWrapping="Wrap" Text="{Binding StartMinuteInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+            </StackPanel>
+            <!--#endregion-->
+            <!--#region End Time -->
+            <StackPanel Height="20" HorizontalAlignment="Center" Orientation="Horizontal">
+                <Label Content="End Time" FontSize="8" Padding="5,5,5,5" UseLayoutRounding="True" ScrollViewer.CanContentScroll="True" VerticalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" Width="80" />
+                <TextBox x:Name="EndHour" TextWrapping="Wrap" Text="{Binding EndHourInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <Label Content=" : " FontSize="8" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                <TextBox x:Name="EndMinute" TextWrapping="Wrap" Text="{Binding EndMinuteInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
             </StackPanel>
         </StackPanel>
     </Grid>
