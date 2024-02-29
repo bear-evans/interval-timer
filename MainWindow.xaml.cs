@@ -33,22 +33,31 @@ namespace IntervalTimer
             this.DataContext = timer;
 
             InitializeComponent();
+
+            // Connect UI callbacks
+            timer.CountdownDisplayChanged += OnCountdownTextChanged;
         }
 
         #endregion Constructor
 
         // =======================================================
 
-        #region Set Inputs
+        #region Event Handlers
 
-        public void SetStartTime()
+        private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            timer.StartTimer();
         }
 
-        public void SetEndTime()
-        {
-        }
+        #endregion Event Handlers
 
-        #endregion Set Inputs
+        // =======================================================
+
+        /// <summary> Updates the countdown text display when triggered by a property change. </summary>
+        /// <param name="text"> The new text to display. </param>
+        public void OnCountdownTextChanged(string text)
+        {
+            CountdownDisplay.Content = text;
+        }
     }
 }

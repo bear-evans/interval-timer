@@ -66,6 +66,7 @@ namespace IntervalTimer
             }
         }
         private int startHourInput = 9;
+
         /// <summary> The contents of the minute text field for the start time UI. </summary>
         public int StartMinuteInput
         {
@@ -77,6 +78,7 @@ namespace IntervalTimer
             }
         }
         private int startMinuteInput = 30;
+
         /// <summary> Event fired when the start time input is changed by the user. </summary>
         public Action StartInputChanged { get; set; } = delegate { };
 
@@ -91,6 +93,7 @@ namespace IntervalTimer
             }
         }
         private int endHourInput = 16;
+
         /// <summary> The contents of the minute text field for the end time UI. </summary>
         public int EndMinuteInput
         {
@@ -103,6 +106,7 @@ namespace IntervalTimer
             }
         }
         private int endMinuteInput = 30;
+
         /// <summary> Event fired when the end time input is changed by the user. </summary>
         public Action EndInputChanged { get; set; } = delegate { };
 
@@ -117,7 +121,7 @@ namespace IntervalTimer
                 IntervalInputChanged?.Invoke();
             }
         }
-        private int intervalHourInput;
+        private int intervalHourInput = 0;
         /// <summary> The contents of the interval minute field. </summary>
         public int IntervalMinuteInput
         {
@@ -129,7 +133,7 @@ namespace IntervalTimer
                 IntervalInputChanged?.Invoke();
             }
         }
-        private int intervalMinuteInput;
+        private int intervalMinuteInput = 3;
         /// <summary> The contents of the interval second field. </summary>
         public int IntervalSecondInput
         {
@@ -141,7 +145,7 @@ namespace IntervalTimer
                 IntervalInputChanged?.Invoke();
             }
         }
-        private int intervalSecondInput;
+        private int intervalSecondInput = 0;
         /// <summary> Event fired when the interval input is changed by the user. </summary>
         public Action IntervalInputChanged { get; set; } = delegate { };
         // ------------------------------
@@ -198,9 +202,46 @@ namespace IntervalTimer
 
         /// <summary> Event fired when the interval changes. </summary>
         public Action<TimeSpan> IntervalChangedEvent { get; set; } = delegate { };
+
+        private TimeSpan timeSinceStart;
+        /// <summary> Amount of time left before the chime. </summary>
+        public double RemainingSeconds
+        {
+            get => remainingSeconds;
+
+            set
+            {
+                lastSeconds = remainingSeconds;
+                remainingSeconds = value;
+            }
+        }
+        private double lastSeconds;
+        private double remainingSeconds;
         // ------------------------------
 
         #endregion Timekeeping
+
+        #region Display Properties
+
+        // ------------------------------
+        /// <summary> The content of the countdown display text field. </summary>
+        public string CountdownDisplay
+        {
+            get => countdownDisplay;
+
+            set
+            {
+                countdownDisplay = value;
+                CountdownDisplayChanged?.Invoke(countdownDisplay);
+            }
+        }
+        private string countdownDisplay = "Waiting...";
+
+        /// <summary> Event fired when the countdown display text is changed. </summary>
+        public Action<string> CountdownDisplayChanged { get; set; } = delegate { };
+        // ------------------------------
+
+        #endregion Display Properties
 
         #endregion Variables
 
@@ -209,7 +250,17 @@ namespace IntervalTimer
         #region Constructor
 
         public Timer()
-        { }
+        {
+            // initialize timespans
+            StartTime = new TimeSpan(StartHourInput, StartMinuteInput, 0);
+            EndTime = new TimeSpan(EndHourInput, EndMinuteInput, 0);
+            Interval = new TimeSpan(IntervalHourInput, IntervalMinuteInput, IntervalSecondInput);
+
+            // Register input event listeners
+            StartInputChanged += OnStartTimeInputChanged;
+            EndInputChanged += OnEndTimeInputChanged;
+            IntervalInputChanged += OnIntervalInputChanged;
+        }
 
         #endregion Constructor
 
@@ -217,14 +268,22 @@ namespace IntervalTimer
 
         #region User Input
 
-        public TimeSpan RecalculateStartTime()
+        /// <summary> Creates a new start time Timespan object from the user's input. </summary>
+        public void OnStartTimeInputChanged()
         {
-            return new TimeSpan(startHourInput, startMinuteInput, 0);
+            StartTime = new TimeSpan(startHourInput, startMinuteInput, 0);
         }
 
-        public TimeSpan RecalculateEndTime()
+        /// <summary> Creates a new end time Timespan object from the user's input. </summary>
+        public void OnEndTimeInputChanged()
         {
-            return new TimeSpan(endHourInput, endMinuteInput, 0);
+            EndTime = new TimeSpan(endHourInput, endMinuteInput, 0);
+        }
+
+        /// <summary> Creates a new interval Timespan object from the user's input. </summary>
+        public void OnIntervalInputChanged()
+        {
+            Interval = new TimeSpan(intervalHourInput, intervalMinuteInput, intervalSecondInput);
         }
 
         #endregion User Input
@@ -235,17 +294,119 @@ namespace IntervalTimer
 
         public void StartTimer()
         {
+            RunTimer();
         }
 
         public async void RunTimer()
         {
+            // Start the timer
+            IsRunning = true;
+
+            // run the timer until the user pauses.
+            while (!IsUserPaused)
+            {
+                // if between start and stop times, run the timer, otherwise, pause it.
+                if (CheckRunTimes())
+                {
+                    // Calculate the remaining time in the current interval from the start time.
+                    timeSinceStart = DateTime.Now.TimeOfDay - startTime;
+                    RemainingSeconds = timeSinceStart.TotalSeconds % interval.TotalSeconds;
+
+                    if (lastSeconds > remainingSeconds)
+                    {
+                        PlayChime();
+                    }
+
+                    // change the display to reflect the new state of the countdown
+                    CountdownDisplay = FormatCountdownText(TimeSpan.FromSeconds(interval.TotalSeconds - remainingSeconds));
+
+                    // wait briefly
+                    await Task.Delay(TimeSpan.FromSeconds(0.25));
+                }
+                else
+                {
+                    DisplayWaiting();
+
+                    // check frequently for changes
+                    await Task.Delay(TimeSpan.FromSeconds(0.5));
+                }
+            }
+
+            DisplayPaused();
         }
 
+        /// <summary> Checks if the current time is between the start time and end time. </summary>
+        /// <returns>
+        /// True if the current time is between the start time and end time, false if not.
+        /// </returns>
         private bool CheckRunTimes()
         {
-            return true;
+            if (startTime < EndTime)
+            {
+                if (DateTime.Now.TimeOfDay >= StartTime && DateTime.Now.TimeOfDay < EndTime)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (DateTime.Now.TimeOfDay >= StartTime && DateTime.Now.TimeOfDay < EndTime)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
         }
 
         #endregion Timer Functions
+
+        // ==============================
+
+        #region Display Functions
+
+        private void DisplayPaused()
+        {
+        }
+
+        private void DisplayWaiting()
+        {
+            CountdownDisplay = "Waiting...";
+        }
+
+        /// <summary>
+        /// Formats a Timespan object as a string to be displayed to the user in the countdown text.
+        /// </summary>
+        /// <param name="timeSpan"> The remaining time to </param>
+        /// <returns> A formatted time string. </returns>
+        public string FormatCountdownText(TimeSpan timeSpan)
+        {
+            if (interval.Hours > 0)
+            {
+                return string.Format("{0:00}:{1:00}:{2:00}", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+            }
+            else
+            {
+                return string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
+            }
+        }
+
+        #endregion Display Functions
+
+        // ==============================
+
+        #region Audio
+
+        private void PlayChime()
+        {
+        }
+
+        #endregion Audio
     }
 }

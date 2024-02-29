@@ -18,22 +18,30 @@
             <ProgressBar x:Name="CountdownBar" Height="10" Background="#FFCACACA" />
         </StackPanel>
         <StackPanel RenderTransformOrigin="0.497,0.504" Width="600" Height="187" VerticalAlignment="Top" Margin="100,194,100,0">
-            <Button x:Name="StartButton" Content="Pause" />
+            <Button x:Name="StartButton" Content="Pause" Click="StartButton_Click" />
             <Label Content="Settings" Margin="0,20,0,0" Width="600" HorizontalContentAlignment="Center" Foreground="Black" BorderThickness="0,0,0,1" BorderBrush="Black" />
             <!-- #region Start Time-->
             <StackPanel Height="20" HorizontalAlignment="Center" Orientation="Horizontal">
                 <Label Content="Start Time" FontSize="8" Padding="5,5,5,5" UseLayoutRounding="True" ScrollViewer.CanContentScroll="True" VerticalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" Width="80" />
-                <TextBox x:Name="StartHour" TextWrapping="Wrap" Text="{Binding StartHourInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <TextBox x:Name="StartHour" TextWrapping="Wrap" Text="{Binding Path=StartHourInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
                 <Label Content=" : " FontSize="8" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
-                <TextBox x:Name="StartMinute" TextWrapping="Wrap" Text="{Binding StartMinuteInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <TextBox x:Name="StartMinute" TextWrapping="Wrap" Text="{Binding Path=StartMinuteInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
             </StackPanel>
             <!--#endregion-->
             <!--#region End Time -->
             <StackPanel Height="20" HorizontalAlignment="Center" Orientation="Horizontal">
                 <Label Content="End Time" FontSize="8" Padding="5,5,5,5" UseLayoutRounding="True" ScrollViewer.CanContentScroll="True" VerticalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" Width="80" />
-                <TextBox x:Name="EndHour" TextWrapping="Wrap" Text="{Binding EndHourInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <TextBox x:Name="EndHour" TextWrapping="Wrap" Text="{Binding Path=EndHourInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
                 <Label Content=" : " FontSize="8" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
-                <TextBox x:Name="EndMinute" TextWrapping="Wrap" Text="{Binding EndMinuteInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <TextBox x:Name="EndMinute" TextWrapping="Wrap" Text="{Binding Path=EndMinuteInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label Content="Interval" FontSize="8" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                <TextBox x:Name="IntervalHour" TextWrapping="Wrap" Text="{Binding Path=IntervalHourInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <Label Content=" : " FontSize="8" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                <TextBox x:Name="IntervalMinute" TextWrapping="Wrap" Text="{Binding Path=IntervalMinuteInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
+                <Label Content=" : " FontSize="8" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                <TextBox x:Name="IntervalSecond" TextWrapping="Wrap" Text="{Binding Path=IntervalSecondInput}" Width="50" TextAlignment="Center" HorizontalAlignment="Left" />
             </StackPanel>
         </StackPanel>
     </Grid>
