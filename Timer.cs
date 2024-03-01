@@ -43,7 +43,7 @@ namespace IntervalTimer
                 UserPausedChangedEvent?.Invoke(isUserPaused);
             }
         }
-        private bool isUserPaused = false;
+        private bool isUserPaused = true;
 
         /// <summary> Event fired when the user pauses or unpauses the timer. </summary>
         public Action<bool> UserPausedChangedEvent { get; set; } = delegate { };
@@ -292,9 +292,14 @@ namespace IntervalTimer
 
         #region Timer Functions
 
-        public void StartTimer()
+        public void StartStopTimer()
         {
-            RunTimer();
+            IsUserPaused = !IsUserPaused;
+
+            if (!IsUserPaused)
+            {
+                RunTimer();
+            }
         }
 
         public async void RunTimer()
@@ -373,6 +378,7 @@ namespace IntervalTimer
 
         private void DisplayPaused()
         {
+            CountdownDisplay = "Paused...";
         }
 
         private void DisplayWaiting()
@@ -383,7 +389,7 @@ namespace IntervalTimer
         /// <summary>
         /// Formats a Timespan object as a string to be displayed to the user in the countdown text.
         /// </summary>
-        /// <param name="timeSpan"> The remaining time to </param>
+        /// <param name="timeSpan"> The remaining time to format as a string. </param>
         /// <returns> A formatted time string. </returns>
         public string FormatCountdownText(TimeSpan timeSpan)
         {
@@ -395,6 +401,10 @@ namespace IntervalTimer
             {
                 return string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
             }
+        }
+
+        private void UpdateTimerProgress()
+        {
         }
 
         #endregion Display Functions

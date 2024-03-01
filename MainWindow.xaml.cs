@@ -36,6 +36,7 @@ namespace IntervalTimer
 
             // Connect UI callbacks
             timer.CountdownDisplayChanged += OnCountdownTextChanged;
+            timer.UserPausedChangedEvent += OnUserPausedChanged;
         }
 
         #endregion Constructor
@@ -46,7 +47,7 @@ namespace IntervalTimer
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            timer.StartTimer();
+            timer.StartStopTimer();
         }
 
         #endregion Event Handlers
@@ -58,6 +59,15 @@ namespace IntervalTimer
         public void OnCountdownTextChanged(string text)
         {
             CountdownDisplay.Content = text;
+        }
+
+        /// <summary>
+        ///  Changes the label of the start and stop button when the user paused state changes.
+        /// </summary>
+        /// <param name="isPaused">The new value of IsUserPaused.</param>
+        public void OnUserPausedChanged(bool isPaused)
+        {
+            StartButton.Content = isPaused ? "Start" : "Pause";
         }
     }
 }

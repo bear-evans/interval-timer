@@ -1,2 +1,6 @@
 # Interval Timer
- An app for reminders at repeated intervals through a time frame.
+ A small timer app for tasks that repeat at regular intervals.
+
+ ## Features
+ * User-configurable start and stop times based on time of day.
+ * User-configurable interval period.
