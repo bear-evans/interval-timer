@@ -1,11 +1,23 @@
 ﻿using Microsoft.Windows.Themes;
 using System;
+using System.Windows.Media;
 
 namespace IntervalTimer
 {
     public class Timer
     {
         #region Variables
+
+        #region Static
+
+        // ------------------------------
+        private static Color timerbarFull = Color.FromArgb(255, 23, 179, 65);
+        private static Color timerbarHalf = Color.FromArgb(255, 207, 159, 27);
+        private static Color timerbarQuarter = Color.FromArgb(255, 227, 53, 5);
+        private static Color timerbarPaused = Color.FromArgb(255, 142, 124, 161);
+        // ------------------------------
+
+        #endregion Static
 
         #region App Flags
 
@@ -204,6 +216,7 @@ namespace IntervalTimer
         public Action<TimeSpan> IntervalChangedEvent { get; set; } = delegate { };
 
         private TimeSpan timeSinceStart;
+
         /// <summary> Amount of time left before the chime. </summary>
         public double RemainingSeconds
         {
@@ -239,6 +252,37 @@ namespace IntervalTimer
 
         /// <summary> Event fired when the countdown display text is changed. </summary>
         public Action<string> CountdownDisplayChanged { get; set; } = delegate { };
+
+        // ------------------------------
+        /// <summary> The fill value of the time progress bar. </summary>
+        public double TimebarProgress
+        {
+            get => timebarProgress; set
+
+            {
+                timebarProgress = value;
+                TimebarProgressChanged?.Invoke(timebarProgress);
+            }
+        }
+        private double timebarProgress;
+
+        /// <summary> Event fired when the fill level of the progress bar changes. </summary>
+        public Action<double> TimebarProgressChanged { get; set; } = delegate { };
+
+        /// <summary> The color of the filled part of the time progress bar. </summary>
+        public Color TimebarColor
+        {
+            get => timebarColor; set
+
+            {
+                timebarColor = value;
+                TimebarColorChanged?.Invoke(timebarColor);
+            }
+        }
+        private Color timebarColor;
+
+        /// <summary> Event fired when the time bar color changes. </summary>
+        public Action<Color> TimebarColorChanged { get; set; } = delegate { };
         // ------------------------------
 
         #endregion Display Properties
@@ -255,6 +299,9 @@ namespace IntervalTimer
             StartTime = new TimeSpan(StartHourInput, StartMinuteInput, 0);
             EndTime = new TimeSpan(EndHourInput, EndMinuteInput, 0);
             Interval = new TimeSpan(IntervalHourInput, IntervalMinuteInput, IntervalSecondInput);
+
+            // initialize colors
+            TimebarColor = timerbarPaused;
 
             // Register input event listeners
             StartInputChanged += OnStartTimeInputChanged;
@@ -324,6 +371,7 @@ namespace IntervalTimer
 
                     // change the display to reflect the new state of the countdown
                     CountdownDisplay = FormatCountdownText(TimeSpan.FromSeconds(interval.TotalSeconds - remainingSeconds));
+                    UpdateTimerProgress((interval.TotalSeconds - RemainingSeconds) / interval.TotalSeconds);
 
                     // wait briefly
                     await Task.Delay(TimeSpan.FromSeconds(0.25));
@@ -378,11 +426,13 @@ namespace IntervalTimer
 
         private void DisplayPaused()
         {
+            TimebarColor = timerbarPaused;
             CountdownDisplay = "Paused...";
         }
 
         private void DisplayWaiting()
         {
+            TimebarColor = timerbarPaused;
             CountdownDisplay = "Waiting...";
         }
 
@@ -403,8 +453,23 @@ namespace IntervalTimer
             }
         }
 
-        private void UpdateTimerProgress()
+        /// <summary> Updates the timer bar variables as the countdown progresses. </summary>
+        private void UpdateTimerProgress(double progress)
         {
+            TimebarProgress = progress;
+
+            if (progress > 0.6f)
+            {
+                TimebarColor = timerbarFull;
+            }
+            if (progress <= 0.6f && progress > .25f)
+            {
+                TimebarColor = timerbarHalf;
+            }
+            if (progress <= .25f)
+            {
+                TimebarColor = timerbarQuarter;
+            }
         }
 
         #endregion Display Functions

@@ -37,6 +37,8 @@ namespace IntervalTimer
             // Connect UI callbacks
             timer.CountdownDisplayChanged += OnCountdownTextChanged;
             timer.UserPausedChangedEvent += OnUserPausedChanged;
+            timer.TimebarColorChanged += OnTimebarColorChanged;
+            timer.TimebarProgressChanged += OnTimebarProgressChanged;
         }
 
         #endregion Constructor
@@ -62,12 +64,26 @@ namespace IntervalTimer
         }
 
         /// <summary>
-        ///  Changes the label of the start and stop button when the user paused state changes.
+        /// Changes the label of the start and stop button when the user paused state changes.
         /// </summary>
-        /// <param name="isPaused">The new value of IsUserPaused.</param>
+        /// <param name="isPaused"> The new value of IsUserPaused. </param>
         public void OnUserPausedChanged(bool isPaused)
         {
             StartButton.Content = isPaused ? "Start" : "Pause";
+        }
+
+        /// <summary> Changes the color of the progress bar as time progresses. </summary>
+        /// <param name="color"> The new color of the progress bar. </param>
+        public void OnTimebarColorChanged(Color color)
+        {
+            CountdownBar.Foreground = new SolidColorBrush(color);
+        }
+
+        /// <summary> Updates the time bar when the countdown progresses. </summary>
+        /// <param name="progress"> The new progress value. </param>
+        public void OnTimebarProgressChanged(double progress)
+        {
+            CountdownBar.Value = progress * 100f;
         }
     }
 }
