@@ -1,6 +1,8 @@
 ﻿using Microsoft.Windows.Themes;
 using System;
+using System.Media;
 using System.Windows.Media;
+using System.Resources;
 
 namespace IntervalTimer
 {
@@ -287,6 +289,15 @@ namespace IntervalTimer
 
         #endregion Display Properties
 
+        #region Audio
+
+        // ------------------------------
+        private static Uri defaultChime = new Uri("pack://application:,,,/IntervalTimer;component/Assets/Audio/ding.wav");
+
+        // ------------------------------
+
+        #endregion Audio
+
         #endregion Variables
 
         // ==============================
@@ -480,6 +491,8 @@ namespace IntervalTimer
 
         private void PlayChime()
         {
+            SoundPlayer defaultChime = new SoundPlayer(IntervalTimer.Resources.ding);
+            defaultChime.Play();
         }
 
         #endregion Audio
